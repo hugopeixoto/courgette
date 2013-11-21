@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander/import'
+
+require 'courgette/commands/graph'
+require 'courgette/commands/stats'
+
+program :version, '1.0.0'
+program :description, 'Dependency graph fetcher'
+
+default_command :stats
+
+command :stats do |c|
+  c.syntax = 'courgette stats [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--glob STRING', String, 'Glob to run metrics over (default: **/*.rb)'
+  c.action do |args, options|
+    options.default :glob => '**/*.rb'
+
+    Courgette::Commands::Stats.new(options).run
+  end
+end
+
+command :graph do |c|
+  c.syntax = 'courgette graph [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--glob STRING', String, 'Glob to run metrics over (default: **/*.rb)'
+  c.option '--name STRING', String, 'Glob to run metrics over (default: graph)'
+  c.option '--format STRING', String, 'Format (default: png)'
+  c.action do |args, options|
+    options.default :glob => '**/*.rb', :format => 'png', :name => 'graph'
+
+    Courgette::Commands::Graph.new(options).run
+  end
+end
