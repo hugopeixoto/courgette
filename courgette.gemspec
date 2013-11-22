@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Courgette::VERSION
   spec.authors       = ["Hugo Peixoto"]
   spec.email         = ["hugo.peixoto@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{Static ruby dependency analyser}
+  spec.summary       = %q{Courgette analyses a set of files, and calculates a dependency graph}
+  spec.homepage      = "https://github.com/hugopeixoto/courgette"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
