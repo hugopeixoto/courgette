@@ -1,4 +1,4 @@
-require 'minitest_helper'
+require 'minitest/autorun'
 require 'courgette/scope'
 
 class TestCourgetteScope < MiniTest::Unit::TestCase
