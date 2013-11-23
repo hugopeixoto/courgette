@@ -33,7 +33,6 @@ module Courgette
       capturer.references.map do |reference|
         r2d.transform reference
       end.compact
-      
     end
   end
 end
