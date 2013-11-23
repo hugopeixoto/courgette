@@ -1,3 +1,4 @@
+require 'courgette/node_grouper'
 require 'graph'
 
 module Courgette
@@ -9,7 +10,7 @@ module Courgette
     def load graph
       calculate_distinct_namespaces graph.nodes
 
-      dot.colorscheme(:set2, [4, [8, @namespaces.count + 1].min].max)
+      dot.colorscheme(:set2, [4, [8, @grouper.groups.count + 1].min].max)
 
       graph.nodes.each do |node|
         add_node node
@@ -28,7 +29,7 @@ module Courgette
     attr_reader :dot
 
     def calculate_distinct_namespaces nodes
-      @namespaces = nodes.group_by { |n| n[0...-1][0...1] }.reject { |k,v| k.empty? || v.length < 4 }.map(&:first).uniq
+      @grouper = Courgette::NodeGrouper.new nodes, 8
     end
 
     def add_node node
@@ -40,8 +41,7 @@ module Courgette
     end
 
     def color node
-      idx = @namespaces.index(node[0...-1][0...1]) || -1
-      idx = [2 + idx, 8].min
+      idx = @grouper.group node
 
       dot.send "c#{idx}"
     end
