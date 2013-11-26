@@ -1,3 +1,4 @@
+require 'simplecov'
 require 'minitest/autorun'
 require 'courgette/scope'
 
