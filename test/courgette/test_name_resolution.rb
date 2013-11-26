@@ -69,4 +69,40 @@ class TestCourgetteNameResolution < MiniTest::Unit::TestCase
     ref = FakeReference.new [:Name], [[:Potato, :Scoped]]
     assert_equal nil, @resolver.resolve(ref)
   end
+
+  def test_ambiguous_reference_from_specific_context
+    definitions = [[:Potato, :Name], [:Name]]
+    create definitions
+
+    ref = FakeReference.new [:Name], [[:Potato]]
+
+    assert_equal [:Potato, :Name], @resolver.resolve(ref)
+  end
+
+  def test_ambiguous_reference_from_specific_context_different_creation_order
+    definitions = [[:Name], [:Potato, :Name]]
+    create definitions
+
+    ref = FakeReference.new [:Name], [[:Potato]]
+
+    assert_equal [:Potato, :Name], @resolver.resolve(ref)
+  end
+
+  def test_ambiguous_reference_from_global_context
+    definitions = [[:Potato, :Name], [:Name]]
+    create definitions
+
+    ref = FakeReference.new [:Name], []
+
+    assert_equal [:Name], @resolver.resolve(ref)
+  end
+
+  def test_ambiguous_reference_from_global_context_different_creation_order
+    definitions = [[:Name], [:Potato, :Name]]
+    create definitions
+
+    ref = FakeReference.new [:Name], []
+
+    assert_equal [:Name], @resolver.resolve(ref)
+  end
 end

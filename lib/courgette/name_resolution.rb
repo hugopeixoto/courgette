@@ -5,14 +5,20 @@ module Courgette
     end
 
     def resolve reference
-      definitions.find do |definition|
-        match_name?(definition, reference) &&
-          match_scope?(definition, reference)
+      matches(reference).max do |x, y|
+        x.length <=> y.length
       end
     end
 
     private
     attr_reader :definitions
+
+    def matches reference
+      definitions.select do |definition|
+        match_name?(definition, reference) &&
+          match_scope?(definition, reference)
+      end
+    end
 
     def match_name? definition, reference
       definition.last == reference.name.last
