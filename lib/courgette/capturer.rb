@@ -1,18 +1,22 @@
 require 'courgette/scope'
 
 module Courgette
-  class Capturer
+  class Captured
     def initialize
       @references  = []
       @definitions = []
     end
 
-    def capture sexpr
-      iterate sexpr, []
+    def add_definition definition
+      @definitions << definition
+    end
+
+    def add_reference reference, context
+      @references << Reference.new(reference, context)
     end
 
     def references
-      @references.uniq! { |reference| reference.to_a }
+      @references.uniq! { |ref| ref.to_a }
       @references
     end
 
@@ -23,13 +27,32 @@ module Courgette
 
     private
     Reference = Struct.new :name, :context
+  end
 
+  class Capturer
+    def initialize observer = nil
+      @captured = observer || Captured.new
+    end
+
+    def capture sexpr
+      iterate sexpr, []
+    end
+
+    def references
+      @captured.references
+    end
+
+    def definitions
+      @captured.definitions
+    end
+
+    private
     def add_definition definition
-      @definitions << definition.flatten
+      @captured.add_definition definition.flatten
     end
 
     def add_reference context, reference
-      @references << Reference.new(reference, context)
+      @captured.add_reference reference, context
     end
 
     def scope sexpr
@@ -62,7 +85,6 @@ module Courgette
       iterate sexpr[1], context
       iterate_many sexpr[3..-1], context
     end
-
 
     def iterate sexpr, context
       return unless sexpr.is_a? Enumerable
