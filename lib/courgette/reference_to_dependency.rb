@@ -2,8 +2,8 @@ require 'courgette/name_resolution'
 
 module Courgette
   class ReferenceToDependency
-    def initialize definitions
-      @resolver = Courgette::NameResolution.new definitions
+    def initialize definitions, resolver = nil
+      @resolver = resolver || Courgette::NameResolution.new(definitions)
     end
 
     def transform reference
