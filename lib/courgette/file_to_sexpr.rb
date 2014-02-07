@@ -9,7 +9,11 @@ module Courgette
     def convert filename
       contents = File.read filename
 
-      @parser.parse contents
+      begin
+        x = @parser.parse contents
+      rescue Racc::ParseError => e
+        $stderr.puts "Error parsing #{filename}: #{e} (file ignored)"
+      end
     end
   end
 end
