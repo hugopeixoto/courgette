@@ -11,7 +11,7 @@ module Courgette
 
       begin
         x = @parser.parse contents
-      rescue Racc::ParseError => e
+      rescue Racc::ParseError, RubyParser::SyntaxError => e
         $stderr.puts "Error parsing #{filename}: #{e} (file ignored)"
       end
     end
