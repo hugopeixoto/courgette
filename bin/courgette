@@ -33,7 +33,7 @@ command :graph do |c|
   c.option '--name STRING', String, 'Glob to run metrics over (default: graph)'
   c.option '--format STRING', String, 'Format (default: png)'
   c.action do |args, options|
-    options.default :glob => '**/*.rb', :format => 'png', :name => 'graph'
+    options.default :glob => '**/*.rb', :format => 'svg', :name => 'graph'
 
     Courgette::Commands::Graph.new(options).run
   end
