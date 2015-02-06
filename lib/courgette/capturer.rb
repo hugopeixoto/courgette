@@ -12,6 +12,7 @@ module Courgette
     end
 
     def add_reference reference, context
+      context = [Kernel] if context.empty?
       @references << Reference.new(reference, context)
     end
 
@@ -74,11 +75,13 @@ module Courgette
     end
 
     def iterate_definition sexpr, context
-      s = scope sexpr[1]
+      s = scope sexpr.children[0]
       new_context = context + [s]
+
       add_definition new_context
 
-      iterate_many sexpr[2..-1], new_context
+
+      iterate_many sexpr.children[1..-1], new_context
     end
 
     def iterate_call sexpr, context
@@ -87,23 +90,17 @@ module Courgette
     end
 
     def iterate sexpr, context
-      return unless sexpr.is_a? Enumerable
+      return unless sexpr.is_a? Parser::AST::Node
 
-      case sexpr[0]
+      case sexpr.type
       when :const, :colon2
         add_reference context, scope(sexpr)
       when :module, :class
         iterate_definition sexpr, context
-      when :cdecl
-        iterate_cdecl sexpr, context
-      when :defn
-        iterate_many sexpr[3..-1], context
-
-      when :call
-        iterate_call sexpr, context
-      when :nil, :lit
+      when :casgn
+        add_definition context + [sexpr.children[1]]
       else
-        iterate_many sexpr[1..-1], context
+        iterate_many sexpr.children, context
       end
     end
   end

@@ -2,6 +2,7 @@ require 'simplecov'
 require 'minitest/autorun'
 require 'courgette/capturer'
 require 'mocha/setup'
+require 'parser/current'
 
 class TestCourgetteCaptured < MiniTest::Unit::TestCase
   def setup
@@ -40,6 +41,11 @@ class TestCourgetteCapturer < MiniTest::Unit::TestCase
   def setup
     @observer = mock()
     @object = Courgette::Capturer.new @observer
+    @parser = Parser::CurrentRuby
+  end
+
+  def capture code
+    @object.capture @parser.parse(code)
   end
 
   def test_references_delegation
@@ -57,53 +63,53 @@ class TestCourgetteCapturer < MiniTest::Unit::TestCase
   def test_class_definition
     @observer.expects(:add_definition).with([:X]).once
 
-    @object.capture [:class, :X]
+    capture "class X; end"
   end
 
   def test_module_definition
     @observer.expects(:add_definition).with([:M]).once
 
-    @object.capture [:module, :M]
+    capture "module M; end"
   end
 
   def test_class_inside_module
     @observer.expects(:add_definition).with([:M]).once
     @observer.expects(:add_definition).with([:M, :C]).once
 
-    @object.capture [:module, :M, [:class, :C]]
+    capture "module M; class C; end; end"
   end
 
   def test_constant_declaration
     @observer.expects(:add_definition).with([:C]).once
 
-    @object.capture [:cdecl, :C, [:lit, 1]]
+    capture "C = 1"
   end
 
   def test_scoped_definition
     @observer.expects(:add_definition).with([:M, :C]).once
 
-    @object.capture [:module, [:colon2, [:const, :M], :C]]
+    capture "module M::C; end"
   end
 
   def test_reference
     @observer.expects(:add_reference).with([:C], []).once
 
-    @object.capture [:const, :C]
+    capture "C"
   end
 
   def test_class_call
     @observer.expects(:add_reference).with([:C], []).once
 
-    @object.capture [:call, [:const, :C], :new]
+    capture "C.new"
   end
 
   def test_reference_in_method
     @observer.expects(:add_reference).with([:C], []).once
 
-    @object.capture [:defn, :bananas, [], [:const, :C]]
+    capture "def bananas; C; end"
   end
 
   def test_others
-    @object.capture [:if, [:lit, 42]]
+    capture "if 42; end"
   end
 end
