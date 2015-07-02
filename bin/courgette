@@ -31,7 +31,8 @@ command :graph do |c|
   c.example 'description', 'command example'
   c.option '--glob STRING', String, 'Glob to run metrics over (default: **/*.rb)'
   c.option '--name STRING', String, 'Glob to run metrics over (default: graph)'
-  c.option '--format STRING', String, 'Format (default: png)'
+  c.option '--format STRING', String, 'Format (default: svg)'
+  c.option '--filter STRING', String, 'Comma-separated class names to filter'
   c.action do |args, options|
     options.default :glob => '**/*.rb', :format => 'svg', :name => 'graph'
 

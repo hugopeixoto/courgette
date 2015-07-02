@@ -9,7 +9,7 @@ module Courgette
       end
 
       def run
-        factory.load graph
+        factory.load filtered_graph
 
         formats.each do |fmt|
           factory.save name, fmt
@@ -33,6 +33,18 @@ module Courgette
         @factory ||= Courgette::Graph2Dot.new do
           boxes
           node_attribs << filled
+        end
+      end
+
+      def filtered_graph
+        @filtered_graph ||= graph.filter filter_nodes
+      end
+
+      def filter_nodes
+        return nil if @options.filter.nil?
+
+        @options.filter.split(',').map do |root|
+          root.split("::").map(&:to_sym)
         end
       end
 
